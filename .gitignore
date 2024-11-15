@@ -6,6 +6,7 @@ build/
 *.properties
 *.gradle
 
+
 ### STS ###
 .apt_generated
 .classpath

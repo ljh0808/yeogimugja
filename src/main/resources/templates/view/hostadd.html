@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>관리자 숙소생성</title>
+   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+     <script src="/js/kakaopost.js"></script>
+     <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6812d65aa97ba829b5720501114f7818&libraries=services"
+        type="text/javascript"></script>
+<style>
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-group label {
+            display: block;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] {
+            display: none;
+        }
+        .checkbox-group input[type="radio"] {
+            display: none;
+        }
+        .checkbox-group input[type="checkbox"]:checked + label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+             .checkbox-group input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+         #image-preview img {
+        margin-right: 10px; /* 이미지 사이의 가로 간격을 10px로 설정합니다. */
+    }
+    </style>
+    <script>
+    function previewImages(event) {
+        var preview = document.getElementById('image-preview');
+    //    preview.innerHTML = ''; // 이미지 미리보기를 업데이트하기 전에 기존 내용을 지웁니다.
+
+        var files = event.target.files; // 사용자가 선택한 파일들을 가져옵니다.
+
+        // 모든 파일에 대해 루프를 실행하여 이미지 미리보기를 추가합니다.
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader(); // 파일을 읽기 위한 FileReader 객체를 생성합니다.
+
+            // 파일 읽기가 완료되면 onload 이벤트 핸들러가 실행됩니다.
+            reader.onload = function(e) {
+                var img = document.createElement('img'); // 이미지 엘리먼트를 생성합니다.
+                img.src = e.target.result; // 읽은 이미지 데이터를 이미지 엘리먼트의 소스로 설정합니다.
+                img.style.width = '200px'; // 이미지의  너비를 지정합니다.
+                img.style.height = '200px'; // 이미지의  높이를 지정합니다.
+                preview.appendChild(img); // 이미지 미리보기 컨테이너에 이미지를 추가합니다.
+            }
+
+            // 파일을 읽어들입니다.
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+</head>
+<body>
+<form action="/mugja/admin/roomadd" method="post" enctype="multipart/form-data">
+<div>숙소명<input type="text" id="host_name" name="host_name" required="required"/></div>
+
+
+숙소주소 <input type="text" disabled="disabled" name="postcode" id="postcode" placeholder="우편번호" required="required">
+    <input type="button" onclick="daumPostcode()" value="우편번호 찾기"><br>
+    <input type="hidden" id="host_lat" name="host_lat">
+    <input type="hidden" id="host_lng" name="host_lng">
+    <input type="text" disabled="disabled" id="host_address" name="host_address" placeholder="주소"><br>
+    <input type="text" id="host_address_detail" name="host_address_detail" placeholder="상세주소">
+
+
+
+<div>숙소연락처<input type="text" id="host_contact" name="host_contact" required="required" placeholder="숫자만 입력해주세요."
+oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/></div>
+<div>숙소소개글<textarea id="host_intro" name="host_intro" cols="30" rows="5" required="required"></textarea></div><br/>
+숙소이미지
+<div>
+    <input type="file" id="hostimgpath" name="hostimgpath" multiple accept="image/*" onchange="previewImages(event)">
+    <div id="image-preview"></div>
+</div>
+
+<h3>숙소</h3>
+ <div class="checkbox-group">
+        <input type="radio" id="motel" name="tag1" value="motel" checked>
+        <label for="motel">모텔</label>
+
+        <input type="radio" id="hotel_resort" name="tag1" value="hotel_resort">
+        <label for="hotel_resort">호텔/리조트</label>
+
+        <input type="radio" id="pension" name="tag1" value="pension">
+        <label for="pension">펜션</label>
+
+        <input type="radio" id="home_villa" name="tag1" value="home_villa">
+        <label for="home_villa">홈/빌라</label>
+
+        <input type="radio" id="camping" name="tag1" value="camping">
+        <label for="camping">캠핑</label>
+
+        <input type="radio" id="guesthouse_hanok" name="tag1" value="guesthouse_hanok">
+        <label for="guesthouse_hanok">게스트하우스/한옥</label>
+    </div>
+<h3>편의시설</h3>
+    <div class="checkbox-group">
+        <input type="checkbox" id="sauna" name="tag2" value="sauna">
+        <label for="sauna">사우나</label>
+
+        <input type="checkbox" id="swimming_pool" name="tag2" value="swimming_pool">
+        <label for="swimming_pool">수영장</label>
+
+        <input type="checkbox" id="bbq" name="tag2" value="bbq">
+        <label for="bbq">BBQ</label>
+
+        <input type="checkbox" id="restaurant" name="tag2" value="restaurant">
+        <label for="restaurant">레스토랑</label>
+
+        <input type="checkbox" id="fitness" name="tag2" value="fitness">
+        <label for="fitness">피트니스</label>
+
+        <input type="checkbox" id="kitchen_dining" name="tag2" value="kitchen_dining">
+        <label for="kitchen_dining">주방/식당</label>
+    </div>
+<h3>객실 내 시설</h3>
+    <div class="checkbox-group">
+        <input type="checkbox" id="spa" name="tag3" value="spa">
+        <label for="spa">스파</label>
+
+        <input type="checkbox" id="minibar" name="tag3" value="minibar">
+        <label for="minibar">미니바</label>
+
+        <input type="checkbox" id="wifi" name="tag3" value="wifi">
+        <label for="wifi">와이파이</label>
+
+        <input type="checkbox" id="air_conditioner" name="tag3" value="air_conditioner">
+        <label for="air_conditioner">에어컨</label>
+
+        <input type="checkbox" id="bath_amenities" name="tag3" value="bath_amenities">
+        <label for="bath_amenities">욕실용품</label>
+    </div>
+<h3>기타시설</h3>
+    <div class="checkbox-group">
+        <input type="checkbox" id="breakfast_included" name="tag4" value="breakfast_included">
+        <label for="breakfast_included">조식포함</label>
+
+        <input type="checkbox" id="free_parking" name="tag4" value="free_parking">
+        <label for="free_parking">무료주차</label>
+
+        <input type="checkbox" id="in_room_cooking" name="tag4" value="in_room_cooking">
+        <label for="in_room_cooking">객실내취사</label>
+
+        <input type="checkbox" id="campfire" name="tag4" value="campfire">
+        <label for="campfire">캠프파이어</label>
+
+        <input type="checkbox" id="pickup_available" name="tag4" value="pickup_available">
+        <label for="pickup_available">픽업가능</label>
+    </div>
+<hr/>    
+<div><input type="submit" value="숙소등록"/></div>
+</form>
+
+</body>
+</html>
